@@ -10,6 +10,12 @@ import (
 func main() {
   scanner := bufio.NewScanner(os.Stdin)
 
+  options := os.Args[1:]
+  optMap := make(map[string]bool)
+  for _, opt := range options {
+    optMap[opt] = true
+  }
+
   for {
     fmt.Print(">> ")
     
@@ -24,10 +30,13 @@ func main() {
     }
     
     tokens := Tokenise(scanner.Text())
-    fmt.Println("tokens: ", tokens)
     
     exp := Parse(tokens)
-    fmt.Println("expression: ", exp.Printexp())
+
+    if optMap["--debug-parse"] {
+      fmt.Println("tokens: ", tokens)
+      fmt.Println("expression: ", exp.Printexp(), "\n")
+    }
 
     valid := exp.Proove()
     if !valid {

@@ -9,7 +9,7 @@ func (exp Expression) Proove() bool {
   var seqs, queue = make(Sequents, 0), make(Sequents, 0)
   queue = append(queue, Sequent{Expressions{}, Expressions{exp}})
 
-  fmt.Println("\nProof Tree:")
+  fmt.Println("Proof Tree:")
   fmt.Println(queue.Printseqs())
 
   for curLvl, nxtLvl := 1, 0; len(queue) > 0; {
