@@ -50,7 +50,9 @@ func Parse(tokens []string) Expression {
    exp = Expression{&leftExp, &rightExp, _imp, 3}
  } else if op == 5 {
    leftExp, rightExp := Parse(tokens[:pos]), Parse(tokens[pos+1:])
-   exp = Expression{&leftExp, &rightExp, _dimp, 3}
+   exp = Expression{&Expression{&leftExp, &rightExp, _imp, 3},
+                    &Expression{&rightExp, &leftExp, _imp, 3},
+                    _and, 3}
  }
 
  return exp
