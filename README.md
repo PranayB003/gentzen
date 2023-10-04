@@ -35,11 +35,16 @@ Symbol|Logical Connective
 <->|Double Implication ($\iff$)
 TRUE|True ($\top$)
 FALSE|False ($\perp$)
-In addition, parenthesis `(`, `)` can be used to specify precedence. All propositional symbols, connectives, and parenthesis symbols **must be separated by spaces** for the expression to be recognised properly by the program (see [Examples](#Examples) below).
+
+In addition, parenthesis `(`, `)` can be used to specify precedence. 
+> [!NOTE]
+> All propositional symbols, connectives, and parenthesis symbols **must be separated by spaces** for the expression to be recognised properly by the program.
+
+For more information, see [Examples](#examples) below.
 
 ### Options
 ```
---help 			: Display available CLI options and other usage information
+--help          : Display available CLI options and other usage information
 --debug-parse	: Display tokens and parsed expression
 --validity-only	: Omit proof tree and sequents from output
 ```
