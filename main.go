@@ -7,13 +7,15 @@ import (
   "log"
 )
 
+var _optMap map[string]bool
+
 func main() {
   scanner := bufio.NewScanner(os.Stdin)
 
   options := os.Args[1:]
-  optMap := make(map[string]bool)
+  _optMap = make(map[string]bool)
   for _, opt := range options {
-    optMap[opt] = true
+    _optMap[opt] = true
   }
 
   for {
@@ -33,16 +35,16 @@ func main() {
     
     exp := Parse(tokens)
 
-    if optMap["--debug-parse"] {
+    if _optMap["--debug-parse"] {
       fmt.Println("tokens: ", tokens)
       fmt.Println("expression: ", exp.Printexp(), "\n")
     }
 
     valid := exp.Proove()
     if !valid {
-      fmt.Println("\nVALID")
+      fmt.Println("VALID")
     } else {
-      fmt.Println("\nINVALID")
+      fmt.Println("INVALID")
     }
   }
 }

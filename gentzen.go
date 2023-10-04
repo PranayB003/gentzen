@@ -9,8 +9,10 @@ func (exp Expression) Proove() bool {
   var seqs, queue = make(Sequents, 0), make(Sequents, 0)
   queue = append(queue, Sequent{Expressions{}, Expressions{exp}})
 
-  fmt.Println("Proof Tree:")
-  fmt.Println(queue.Printseqs())
+  if !_optMap["--validity-only"] {
+    fmt.Println("Proof Tree:")
+    fmt.Println(queue.Printseqs())
+  }
 
   for curLvl, nxtLvl := 1, 0; len(queue) > 0; {
     top := queue[0]
@@ -21,33 +23,37 @@ func (exp Expression) Proove() bool {
     }
     curLvl-- 
 
-    if top.isLowestForm() == false {
-      decSeqs := top.decompose() 
+    if top.IsLowestForm() == false {
+      decSeqs := top.Decompose() 
       queue = append(queue, decSeqs...)
       nxtLvl += len(decSeqs)
     } else {
       seqs = append(seqs, top)
     }
 
-    if curLvl == 0 {
-      fmt.Println(queue.Printseqs())
-      curLvl, nxtLvl = nxtLvl, 0
+    if !_optMap["--validity-only"] {
+      if curLvl == 0 {
+        fmt.Println(queue.Printseqs())
+        curLvl, nxtLvl = nxtLvl, 0
+      }
     }
   }
 
-  fmt.Println("Final Sequents:")
-  fmt.Println(seqs.Printseqs())
+  if !_optMap["--validity-only"] {
+    fmt.Println("Final Sequents:")
+    fmt.Println(seqs.Printseqs(), "\n")
+  }
 
   res := true
   for i := 0; i < len(seqs); i++ {
-    res = seqs[i].validate()
+    res = seqs[i].Validate()
   }
 
   return res
 }
 
 // decompose a sequent by using one of the 8 rules
-func (seq Sequent) decompose() Sequents {
+func (seq Sequent) Decompose() Sequents {
   res := make(Sequents, 0)
   ant, con := seq.ant, seq.con
 
@@ -94,7 +100,7 @@ func (seq Sequent) decompose() Sequents {
 
 // returns false if the sequent has a contradiction
 // the sequent must be in the lowest form (not decomposable further)
-func (seq Sequent) validate() (res bool) {
+func (seq Sequent) Validate() (res bool) {
   res = true
   ant, con := seq.ant, seq.con
   antTerms := make(map[string]bool)
@@ -118,7 +124,7 @@ func (seq Sequent) validate() (res bool) {
 }
 
 // returns true if a sequent cannot be decomposed further
-func (seq Sequent) isLowestForm() (res bool) {
+func (seq Sequent) IsLowestForm() (res bool) {
   res = true
   ant, con := seq.ant, seq.con
 
