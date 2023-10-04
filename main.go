@@ -24,6 +24,13 @@ func main() {
     
     exp := Parse(tokens)
     fmt.Println("expression: ", exp.Printexp())
+
+    valid := exp.Proove()
+    if !valid {
+      fmt.Println("VALID")
+    } else {
+      fmt.Println("INVALID")
+    }
   }
 }
 
