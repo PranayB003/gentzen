@@ -1,11 +1,13 @@
 package main
 
-// operator types
-var _not  string = "!"
-var _and  string = "&"
-var _or   string = "|"
-var _imp  string = "->"
-var _dimp string = "<->"
+// connectives
+var _true  string = "TRUE"
+var _false string = "FALSE"
+var _not   string = "!"
+var _and   string = "&"
+var _or    string = "|"
+var _imp   string = "->"
+var _dimp  string = "<->"
 
 // etypes for Expressions
 var _term   byte = 1

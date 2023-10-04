@@ -94,45 +94,47 @@ func (seq Sequent) decompose() Sequents {
 
 // returns false if the sequent has a contradiction
 // the sequent must be in the lowest form (not decomposable further)
-func (seq Sequent) validate() bool {
-  res := true
+func (seq Sequent) validate() (res bool) {
+  res = true
   ant, con := seq.ant, seq.con
   antTerms := make(map[string]bool)
 
   for i := 0; i < len(ant); i++ {
-    exp := ant[i]
-    antTerms[exp.mid] = true
+    if ant[i].mid == _false {
+      res = false
+      return
+    }
+    antTerms[ant[i].mid] = true
   }
 
   for i := 0; i < len(con); i++ {
-    exp := con[i]
-    if antTerms[exp.mid] == true {
+    if antTerms[con[i].mid] == true || con[i].mid == _true {
       res = false
-      break
+      return
     }
   }
 
-  return res
+  return 
 }
 
 // returns true if a sequent cannot be decomposed further
-func (seq Sequent) isLowestForm() bool {
-  res := true
+func (seq Sequent) isLowestForm() (res bool) {
+  res = true
   ant, con := seq.ant, seq.con
 
   for i := 0; i < len(ant); i++ {
     if ant[i].etype != 1 {
       res = false
-      break
+      return
     }
   }
 
   for i := 0; i < len(con); i++ {
     if con[i].etype != 1 {
       res = false
-      break
+      return
     }
   }
 
-  return res
+  return 
 }
