@@ -20,7 +20,10 @@ func main() {
     }
     
     tokens := Tokenise(scanner.Text())
-    fmt.Println(tokens)
+    fmt.Println("tokens: ", tokens)
+    
+    exp := Parse(tokens)
+    fmt.Println("expression: ", exp.Printexp())
   }
 }
 
