@@ -42,27 +42,27 @@ func (exp Expression) Printexp() string {
 
 func (seq Sequent) Printseq() (res string) {
   ant, con := seq.ant, seq.con
-  for i := 0; i < len(ant); i++ {
+  for i, val := range ant {
     if i == 0 {
-      res += ant[i].Printexp()
+      res += val.Printexp()
     } else {
-      res = res + ", " + ant[i].Printexp()
+      res = res + ", " + val.Printexp()
     }
   }
   res = res + " => "
-  for i := 0; i < len(con); i++ {
+  for i, val := range con {
     if i == 0 {
-      res += con[i].Printexp()
+      res += val.Printexp()
     } else {
-      res = res + ", " + con[i].Printexp()
+      res = res + ", " + val.Printexp()
     }
   }
   return
 }
 
 func (seqs Sequents) Printseqs() (res string) {
-  for i := 0; i < len(seqs); i++ {
-    res = res + seqs[i].Printseq() + "     "
+  for _, val := range seqs {
+    res = res + val.Printseq() + "     "
   }
   return
 }
