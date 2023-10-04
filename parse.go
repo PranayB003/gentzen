@@ -32,27 +32,27 @@ func Parse(tokens []string) Expression {
    if len(tokens) > 1 {
      log.Fatal("No operator between operands")
    }
-   exp = Expression{nil, nil, tokens[0], 1}
+   exp = Expression{nil, nil, tokens[0], _term}
  } else if op == 1 {
    if tokens[0] != _not {
      log.Fatal("Invalid usage of NOT operator")
    }
    rightExp := Parse(tokens[pos+1:])
-   exp = Expression{nil, &rightExp, _not, 2}
+   exp = Expression{nil, &rightExp, _not, _unary}
  } else if op == 2 {
    leftExp, rightExp := Parse(tokens[:pos]), Parse(tokens[pos+1:])
-   exp = Expression{&leftExp, &rightExp, _and, 3}
+   exp = Expression{&leftExp, &rightExp, _and, _binary}
  } else if op == 3 {
    leftExp, rightExp := Parse(tokens[:pos]), Parse(tokens[pos+1:])
-   exp = Expression{&leftExp, &rightExp, _or, 3}
+   exp = Expression{&leftExp, &rightExp, _or, _binary}
  } else if op == 4 {
    leftExp, rightExp := Parse(tokens[:pos]), Parse(tokens[pos+1:])
-   exp = Expression{&leftExp, &rightExp, _imp, 3}
+   exp = Expression{&leftExp, &rightExp, _imp, _binary}
  } else if op == 5 {
    leftExp, rightExp := Parse(tokens[:pos]), Parse(tokens[pos+1:])
-   exp = Expression{&Expression{&leftExp, &rightExp, _imp, 3},
-                    &Expression{&rightExp, &leftExp, _imp, 3},
-                    _and, 3}
+   exp = Expression{&Expression{&leftExp, &rightExp, _imp, _binary},
+                    &Expression{&rightExp, &leftExp, _imp, _binary},
+                    _and, _binary}
  }
 
  return exp
