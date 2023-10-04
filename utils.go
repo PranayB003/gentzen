@@ -1,5 +1,25 @@
 package main
 
+// returns a unique number for each operator,
+// a lower number signifies higher precedence
+func OpStrToNum(operator string) (res int) {
+  switch operator {
+  case _not:
+    res = 1
+  case _and:
+    res = 2
+  case _or:
+    res = 3
+  case _imp:
+    res = 4
+  case _dimp:
+    res = 5
+  default:
+    res = 0
+  }
+  return
+}
+
 func (exps Expressions) Append(newElems ...Expression) Expressions {
   res := make(Expressions, len(exps))
   copy(res, exps)

@@ -13,16 +13,17 @@ func Parse(tokens []string) Expression {
  op, pos := 0, 0
 
  for i:= 0; i < len(tokens); i++ {
+   opNum := OpStrToNum(tokens[i])
    if tokens[i] == _dimp {
      op, pos = 5, i
      break
-   } else if tokens[i] == _imp && op < 4 {
+   } else if tokens[i] == _imp && op < opNum {
      op, pos = 4, i
-   } else if tokens[i] == _or  && op < 3 {
+   } else if tokens[i] == _or  && op < opNum {
      op, pos = 3, i
-   } else if tokens[i] == _and  && op < 2 {
+   } else if tokens[i] == _and  && op < opNum {
      op, pos = 2, i
-   } else if tokens[i] == _not  && op < 1 {
+   } else if tokens[i] == _not  && op < opNum {
      op, pos = 1, i
    }
  } 
