@@ -55,16 +55,3 @@ func Parse(tokens []string) Expression {
 
  return exp
 }
-
-func (exp Expression) Printexp() string {
-  var res string
-  if exp.etype == _term {
-    res = exp.mid
-  } else if exp.etype == _unary {
-    res = exp.mid + " " + exp.right.Printexp()
-  } else if exp.etype == _binary {
-    res = exp.left.Printexp() + " " + exp.mid + " " + exp.right.Printexp()
-  }
-  res = "(" + res + ")"
-  return res
-}

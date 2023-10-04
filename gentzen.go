@@ -6,30 +6,37 @@ import (
 
 // checks for validity of an expression`
 func (exp Expression) Proove() bool {
-  var seqs, queue = make([]Sequent, 0), make([]Sequent, 0)
-  queue = append(queue, Sequent{[]Expression{}, []Expression{exp}})
+  var seqs, queue = make(Sequents, 0), make(Sequents, 0)
+  queue = append(queue, Sequent{Expressions{}, Expressions{exp}})
 
-  fmt.Println("Sequents:")
-  fmt.Println(Printseqs(seqs))
+  fmt.Println("\nProof Tree:")
+  fmt.Println(queue.Printseqs())
 
-  for len(queue) > 0 {
+  for curLvl, nxtLvl := 1, 0; len(queue) > 0; {
     top := queue[0]
     if len(queue) == 1 {
       queue = []Sequent{}
     } else {
       queue = queue[1:]
     }
+    curLvl-- 
 
     if top.isLowestForm() == false {
       decSeqs := top.decompose() 
       queue = append(queue, decSeqs...)
+      nxtLvl += len(decSeqs)
     } else {
       seqs = append(seqs, top)
     }
 
-    fmt.Println("Sequents:")
-    fmt.Println(Printseqs(seqs))
+    if curLvl == 0 {
+      fmt.Println(queue.Printseqs())
+      curLvl, nxtLvl = nxtLvl, 0
+    }
   }
+
+  fmt.Println("Final Sequents:")
+  fmt.Println(seqs.Printseqs())
 
   res := true
   for i := 0; i < len(seqs); i++ {
@@ -40,30 +47,25 @@ func (exp Expression) Proove() bool {
 }
 
 // decompose a sequent by using one of the 8 rules
-func (seq Sequent) decompose() []Sequent {
-  res := make([]Sequent, 0)
+func (seq Sequent) decompose() Sequents {
+  res := make(Sequents, 0)
   ant, con := seq.ant, seq.con
 
   // left rules
   for i := 0; i < len(ant); i++ {
     exp := ant[i]
+    newAnt := ant[:i].Append(ant[i+1:]...)
     if exp.etype == 2 && exp.mid == _not {
-      newAnt := append(ant[:i], ant[i+1:]...)
-      newCon := append(con, *(exp.right))
-      res = append(res, Sequent{newAnt, newCon})
+      res = append(res, Sequent{newAnt, con.Append(*(exp.right))})
     } else if exp.etype == 3 && exp.mid == _and {
-      newAnt := append(ant[:i], ant[i+1:]...)
-      newAnt = append(newAnt, *(exp.left), *(exp.right))
-      res = append(res, Sequent{newAnt, con})
+      res = append(res, Sequent{newAnt.Append(*(exp.left), *(exp.right)), con})
     } else if exp.etype == 3 && exp.mid == _or {
-      newAnt := append(ant[:i], ant[i+1:]...)
-      newAnt1 := append(newAnt, *(exp.left))
-      newAnt2 := append(newAnt, *(exp.right))
+      newAnt1 := newAnt.Append(*(exp.left))
+      newAnt2 := newAnt.Append(*(exp.right))
       res = append(res, Sequent{newAnt1, con}, Sequent{newAnt2, con})
     } else if exp.etype == 3 && exp.mid == _imp {
-      newAnt := append(ant[:i], ant[i+1:]...)
-      newAnt1 := append(newAnt, *(exp.right))
-      newCon2 := append(con, *(exp.left))
+      newAnt1 := newAnt.Append(*(exp.right))
+      newCon2 := con.Append(*(exp.left))
       res = append(res, Sequent{newAnt, newCon2}, Sequent{newAnt1, con})
     }
   }
@@ -71,24 +73,19 @@ func (seq Sequent) decompose() []Sequent {
   // right rules
   for i := 0; i < len(con); i++ {
     exp := con[i]
+    newCon := con[:i].Append(con[i+1:]...)
     if exp.etype == 2 && exp.mid == _not {
-      newCon := append(con[:i], con[i+1:]...)
-      newAnt := append(ant, *(exp.right))
-      res = append(res, Sequent{newAnt, newCon})
+      res = append(res, Sequent{ant.Append(*(exp.right)), newCon})
     } else if exp.etype == 3 && exp.mid == _or {
-      newCon := append(con[:i], con[i+1:]...)
-      newCon = append(newCon, *(exp.left), *(exp.right))
-      res = append(res, Sequent{ant, newCon})
+      res = append(res, Sequent{ant, newCon.Append(*(exp.left), *(exp.right))})
     } else if exp.etype == 3 && exp.mid == _and {
-      newCon := append(con[:i], con[i+1:]...)
-      newCon1 := append(newCon, *(exp.left))
-      newCon2 := append(newCon, *(exp.right))
+      newCon1 := newCon.Append(*(exp.left))
+      newCon2 := newCon.Append(*(exp.right))
       res = append(res, Sequent{ant, newCon1}, Sequent{ant, newCon2})
     } else if exp.etype == 3 && exp.mid == _imp {
-      newCon := append(con[:i], con[i+1:]...)
-      newCon = append(newCon, *(exp.right))
-      newAnt := append(ant, *(exp.left))
-      res = append(res, Sequent{newAnt, newCon})
+      newCon1 := newCon.Append(*(exp.right))
+      newAnt := ant.Append(*(exp.left))
+      res = append(res, Sequent{newAnt, newCon1})
     }
   }
 
@@ -138,23 +135,4 @@ func (seq Sequent) isLowestForm() bool {
   }
 
   return res
-}
-
-func (seq Sequent) Printseq() (res string) {
-  ant, con := seq.ant, seq.con
-  for i := 0; i < len(ant); i++ {
-    res = res + ", " + ant[i].Printexp()
-  }
-  res = res + " => "
-  for i := 0; i < len(con); i++ {
-    res = res + ", " + con[i].Printexp()
-  }
-  return
-}
-
-func Printseqs(seqs []Sequent) (res string) {
-  for i := 0; i < len(seqs); i++ {
-    res = res + seqs[i].Printseq() + "\n"
-  }
-  return
 }

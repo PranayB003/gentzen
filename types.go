@@ -19,7 +19,11 @@ type Expression struct {
   etype  byte
 }
 
+type Expressions []Expression
+
 type Sequent struct {
-  ant []Expression // antecedents
-  con []Expression // consequents
+  ant Expressions // antecedents
+  con Expressions // consequents
 }
+
+type Sequents []Sequent

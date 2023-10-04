@@ -18,6 +18,10 @@ func main() {
     if err != nil {
       log.Fatal(err)
     }
+
+    if scanner.Text() == "" {
+      continue
+    }
     
     tokens := Tokenise(scanner.Text())
     fmt.Println("tokens: ", tokens)
@@ -27,9 +31,9 @@ func main() {
 
     valid := exp.Proove()
     if !valid {
-      fmt.Println("VALID")
+      fmt.Println("\nVALID")
     } else {
-      fmt.Println("INVALID")
+      fmt.Println("\nINVALID")
     }
   }
 }
