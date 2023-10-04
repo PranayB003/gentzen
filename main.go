@@ -41,7 +41,7 @@ func main() {
     }
 
     valid := exp.Proove()
-    if !valid {
+    if valid {
       fmt.Println("VALID")
     } else {
       fmt.Println("INVALID")

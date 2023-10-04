@@ -46,7 +46,7 @@ func (exp Expression) Proove() bool {
 
   res := true
   for i := 0; i < len(seqs); i++ {
-    res = seqs[i].Validate()
+    res = res && seqs[i].HasContradiction()
   }
 
   return res
@@ -97,16 +97,16 @@ func (seq Sequent) Decompose() Sequents {
   return Sequents{}
 }
 
-// returns false if the sequent has a contradiction
+// returns true if the sequent has a contradiction
 // the sequent must be in the lowest form (not decomposable further)
-func (seq Sequent) Validate() (res bool) {
-  res = true
+func (seq Sequent) HasContradiction() (res bool) {
+  res = false
   ant, con := seq.ant, seq.con
   antTerms := make(map[string]bool)
 
   for i := 0; i < len(ant); i++ {
     if ant[i].mid == _false {
-      res = false
+      res = true
       return
     }
     antTerms[ant[i].mid] = true
@@ -114,7 +114,7 @@ func (seq Sequent) Validate() (res bool) {
 
   for i := 0; i < len(con); i++ {
     if antTerms[con[i].mid] == true || con[i].mid == _true {
-      res = false
+      res = true
       return
     }
   }
