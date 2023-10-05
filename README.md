@@ -3,6 +3,7 @@ Sequent calculus (Gentzen system) implementation in GO to check the validity of
 a propositional formula, done as part of an assignment for Mathematical Foundations of Computer Science (CS6L015).
 
 Given a propositional formula, the program returns `VALID` if it is a tautology, and `INVALID` otherwise.
+The proof tree, sequents and parsing information can optionally be printed/omitted by specifying appropriate [Options](#options). The [Syntax](#syntax) section lists supported connectives/symbols and describes how logical formulae should be provided to the program.
 
 ## Installation
 To compile and execute this program, you need to have [Go](https://go.dev/) installed. You can do this by following the [installation instructions](https://go.dev/dl/) on the official website, or by using a package manager like [Homebrew](https://brew.sh/):
