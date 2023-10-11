@@ -47,9 +47,12 @@ For more information, see [Examples](#examples) below.
 
 ### Options
 ```
---help          : Display available CLI options and other usage information
---debug-parse	: Display tokens and parsed expression
---validity-only	: Omit proof tree and sequents from output
+--help           : Display available CLI options and other usage information
+--debug-parse	 : Display tokens and parsed expression
+--validity-only	 : Omit proof tree and sequents from output
+--no-interactive : Evaluate an expression directly encoded in main.go using
+functions defined in operations.go, instead of accepting input interactively.
+Useful for debugging parsing errors.
 ```
 
 ### Examples
@@ -73,13 +76,13 @@ expression:  (((p) & (! (q))) -> (((p) -> (q)) & ((q) -> (p))))
 Proof Tree:
  => (((p) & (! (q))) -> (((p) -> (q)) & ((q) -> (p))))
 ((p) & (! (q))) => (((p) -> (q)) & ((q) -> (p)))
-((p) & (! (q))) => ((p) -> (q))     ((p) & (! (q))) => ((q) -> (p))
-((p) & (! (q))), (p) => (q)     ((p) & (! (q))), (q) => (p)
-(p), (p), (! (q)) => (q)     (q), (p), (! (q)) => (p)
-(p), (p) => (q), (q)     (q), (p) => (p), (q)
+(p), (! (q)) => (((p) -> (q)) & ((q) -> (p)))
+(p) => (((p) -> (q)) & ((q) -> (p))), (q)
+(p) => (q), ((p) -> (q))     (p) => (q), ((q) -> (p))
+(p) => (q)     (p), (q) => (q), (p)
 
 Final Sequents:
-(p), (p) => (q), (q)     (q), (p) => (p), (q)
+(p) => (q)     (p), (q) => (q), (p)
 
 INVALID
 ```
@@ -87,6 +90,9 @@ INVALID
 ```
 $ ./gzn
 >> ! p | q -> p -> q
+tokens:  [! p | q -> p -> q]
+expression:  (((! (p)) | (q)) -> ((p) -> (q)))
+
 Proof Tree:
  => (((! (p)) | (q)) -> ((p) -> (q)))
 ((! (p)) | (q)) => ((p) -> (q))
