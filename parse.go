@@ -2,6 +2,7 @@ package main
 
 import (
   "strings"
+  "slices"
 )
 
 func Tokenise(exp string) []string {
@@ -9,39 +10,42 @@ func Tokenise(exp string) []string {
 }
 
 func Parse(tokens []string) Expression {
-  enclPrths := true
-  for i, val := range tokens {
-    if (0 < i && i < len(tokens)-1) && (val == "(" || val == ")") {
-      enclPrths = false
-      break
-    }
-  }
-  enclPrths = enclPrths && tokens[0] == "(" && tokens[len(tokens)-1] == ")"
-  if enclPrths {
-    // the expression is encloses by parenthesis, which can be omitted
-    tokens = tokens[1:len(tokens)-1]  
-  }
-
-  isOuterTerm := make([]bool, len(tokens))
+  level := make([]int, len(tokens))
   for lvl, i := 0, 0; i < len(tokens); i++ {
     switch tokens[i] {
-    case "(": 
+    case "(": {
       lvl++
-    case ")":
+      level[i] = lvl
+    }
+    case ")": {
+      level[i] = lvl
       lvl--
-    default: {
-      if lvl == 0 {
-        isOuterTerm[i] = true
+    }
+    default: 
+      level[i] = lvl
+    }
+  }
+
+  // remove enclosing parenthesis if they exist
+  remParenth := tokens[0] == "(" && tokens[len(tokens)-1] == ")"
+  if remParenth {
+    for i, val := range level {
+      if 0 < i && i < len(level)-1 && val < level[0] {
+        remParenth = false
       }
     }
-    }
+  }
+  if remParenth {
+    tokens = tokens[1:len(tokens)-1]
+    level = level[1:len(level)-1]
   }
 
   op, pos := 0, 0
 
+  minLvl := slices.Min(level)
   for i, val := range tokens {
     opNum := OpStrToNum(val)
-    if opNum == 0 || isOuterTerm[i] == false {
+    if opNum == 0 || level[i] > minLvl {
       continue
     }
 
