@@ -56,40 +56,50 @@ func (exp Expression) Proove() bool {
 func (seq Sequent) Decompose() Sequents {
   ant, con := seq.ant, seq.con
 
-  // right rules
-  for i := 0; i < len(con); i++ {
-    exp := con[i]
+  // right rules without fanout (right-NOT, right-OR, right-IMPLICATION)
+  for i, exp := range con {
     newCon := con[:i].Append(con[i+1:]...)
     if exp.etype == 2 && exp.mid == _not {
-      return Sequents{Sequent{ant.Append(*(exp.right)), newCon}}
+      return Sequents{Sequent{ant.AppendUnique(*(exp.right)), newCon}}
     } else if exp.etype == 3 && exp.mid == _or {
-      return Sequents{Sequent{ant, newCon.Append(*(exp.left), *(exp.right))}}
+      return Sequents{Sequent{ant, newCon.AppendUnique(*(exp.left), *(exp.right))}}
     } else if exp.etype == 3 && exp.mid == _imp {
-      newCon1 := newCon.Append(*(exp.right))
-      newAnt := ant.Append(*(exp.left))
+      newCon1 := newCon.AppendUnique(*(exp.right))
+      newAnt := ant.AppendUnique(*(exp.left))
       return Sequents{Sequent{newAnt, newCon1}}
+    }
+  }
+
+  // left rules without fanout (left-NOT, left-AND)
+  for i, exp := range ant {
+    newAnt := ant[:i].Append(ant[i+1:]...)
+    if exp.etype == 2 && exp.mid == _not {
+      return Sequents{Sequent{newAnt, con.AppendUnique(*(exp.right))}}
     } else if exp.etype == 3 && exp.mid == _and {
-      newCon1 := newCon.Append(*(exp.left))
-      newCon2 := newCon.Append(*(exp.right))
+      return Sequents{Sequent{newAnt.AppendUnique(*(exp.left), *(exp.right)), con}}
+    }
+  }
+
+  // right rules with fanout (right-AND)
+  for i, exp := range con {
+    newCon := con[:i].Append(con[i+1:]...)
+    if exp.etype == 3 && exp.mid == _and {
+      newCon1 := newCon.AppendUnique(*(exp.left))
+      newCon2 := newCon.AppendUnique(*(exp.right))
       return Sequents{Sequent{ant, newCon1}, Sequent{ant, newCon2}}
     }  
   }
 
-  // left rules
-  for i := 0; i < len(ant); i++ {
-    exp := ant[i]
+  // left rules with fanout (left-OR, left-IMPLICATION)
+  for i, exp := range ant {
     newAnt := ant[:i].Append(ant[i+1:]...)
-    if exp.etype == 2 && exp.mid == _not {
-      return Sequents{Sequent{newAnt, con.Append(*(exp.right))}}
-    } else if exp.etype == 3 && exp.mid == _and {
-      return Sequents{Sequent{newAnt.Append(*(exp.left), *(exp.right)), con}}
-    } else if exp.etype == 3 && exp.mid == _or {
-      newAnt1 := newAnt.Append(*(exp.left))
-      newAnt2 := newAnt.Append(*(exp.right))
+    if exp.etype == 3 && exp.mid == _or {
+      newAnt1 := newAnt.AppendUnique(*(exp.left))
+      newAnt2 := newAnt.AppendUnique(*(exp.right))
       return Sequents{Sequent{newAnt1, con}, Sequent{newAnt2, con}}
     } else if exp.etype == 3 && exp.mid == _imp {
-      newAnt1 := newAnt.Append(*(exp.right))
-      newCon2 := con.Append(*(exp.left))
+      newAnt1 := newAnt.AppendUnique(*(exp.right))
+      newCon2 := con.AppendUnique(*(exp.left))
       return Sequents{Sequent{newAnt, newCon2}, Sequent{newAnt1, con}}
     }
   }

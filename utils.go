@@ -27,6 +27,39 @@ func (exps Expressions) Append(newElems ...Expression) Expressions {
   return res
 } 
 
+func (exps Expressions) AppendUnique(newElems ...Expression) Expressions {
+  res := make(Expressions, len(exps))
+  copy(res, exps)
+  for _, newEl := range newElems {
+    unique := true
+    for _, exp := range exps {
+      if exp.Equals(newEl) {
+        unique = false
+      }
+    }
+    if unique {
+      res = append(res, newEl)
+    }
+  }
+  return res
+}
+
+func (a Expression) Equals(b Expression) bool {
+  if a.etype != b.etype {
+    return false
+  }
+  if (a.left == nil && b.left != nil) || (a.left != nil && b.left == nil) ||
+     (a.right == nil && b.right != nil) || (a.right != nil && b.right == nil) {
+    return false
+  }
+  if (a.left != nil && b.left != nil && !a.left.Equals(*b.left)) ||
+     (a.right != nil && b.right != nil && !a.right.Equals(*b.right)) ||
+     (a.mid != b.mid) {
+    return false
+  }
+  return true
+}
+
 func (exp Expression) Printexp() string {
   var res string
   if exp.etype == _term {
