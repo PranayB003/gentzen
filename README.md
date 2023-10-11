@@ -57,7 +57,7 @@ For more information, see [Examples](#examples) below.
 ```
 $ ./gzn --validity-only
 >> ( a -> c ) -> ( ( b -> c ) -> ( ( a | b ) -> c ) )
-INVALID
+VALID
 >>
 >> a -> a
 VALID
